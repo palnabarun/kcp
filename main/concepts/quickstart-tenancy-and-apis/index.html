@@ -14,10 +14,10 @@
         <link rel="canonical" href="https://docs.kcp.io/kcp/main/concepts/quickstart-tenancy-and-apis/">
       
       
-        <link rel="prev" href="../placement-locations-and-scheduling/">
+        <link rel="prev" href="../partitions/">
       
       
-        <link rel="next" href="../registering-kubernetes-clusters-using-syncer/">
+        <link rel="next" href="../rest-access-patterns/">
       
       <link rel="icon" href="../../favicons/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0">
@@ -305,10 +305,6 @@
         
           
         
-          
-        
-          
-        
       
       
         
@@ -409,20 +405,6 @@
     <li class="md-nav__item">
       <a href="../partitions/" class="md-nav__link">
         Partition API
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../placement-locations-and-scheduling/" class="md-nav__link">
-        Placement, Locations, and Scheduling
       </a>
     </li>
   
@@ -560,20 +542,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../registering-kubernetes-clusters-using-syncer/" class="md-nav__link">
-        Registering Kubernetes Clusters using syncer
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../rest-access-patterns/" class="md-nav__link">
         REST access patterns
       </a>
@@ -588,8 +556,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../storage/" class="md-nav__link">
-        Storage and stateful applications
+      <a href="../sharding/" class="md-nav__link">
+        Shards
       </a>
     </li>
   
@@ -677,6 +645,8 @@
         
           
         
+          
+        
       
       
         
@@ -735,6 +705,20 @@
     <li class="md-nav__item">
       <a href="../../developers/publishing-a-new-kcp-release/" class="md-nav__link">
         Publishing a new kcp release
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/rebasing-kubernetes/" class="md-nav__link">
+        Rebasing Kubernetes
       </a>
     </li>
   
@@ -980,18 +964,6 @@
         
           
         
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
       
       
         <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
@@ -1042,20 +1014,6 @@
     <li class="md-nav__item">
       <a href="../../reference/cli/kcp_bind_apiexport/" class="md-nav__link">
         kcp bind apiexport
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/kcp_bind_compute/" class="md-nav__link">
-        kcp bind compute
       </a>
     </li>
   
@@ -1126,76 +1084,6 @@
     <li class="md-nav__item">
       <a href="../../reference/cli/kcp_crd_snapshot/" class="md-nav__link">
         kcp crd snapshot
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/kcp_workload/" class="md-nav__link">
-        kcp workload
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/kcp_workload_cordon/" class="md-nav__link">
-        kcp workload cordon
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/kcp_workload_drain/" class="md-nav__link">
-        kcp workload drain
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/kcp_workload_sync/" class="md-nav__link">
-        kcp workload sync
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/kcp_workload_uncordon/" class="md-nav__link">
-        kcp workload uncordon
       </a>
     </li>
   
@@ -1330,16 +1218,6 @@
         
           
         
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
       
       
         <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -1416,20 +1294,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/crd/apiresourceimports.apiresource.kcp.io/" class="md-nav__link">
-        APIResourceImport
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/crd/apiresourceschemas.apis.kcp.io/" class="md-nav__link">
         APIResourceSchema
       </a>
@@ -1444,36 +1308,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/crd/locations.scheduling.kcp.io/" class="md-nav__link">
-        Location
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/crd/logicalclusters.core.kcp.io/" class="md-nav__link">
         LogicalCluster
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/crd/negotiatedapiresources.apiresource.kcp.io/" class="md-nav__link">
-        NegotiatedAPIResource
       </a>
     </li>
   
@@ -1514,36 +1350,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/crd/placements.scheduling.kcp.io/" class="md-nav__link">
-        Placement
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/crd/shards.core.kcp.io/" class="md-nav__link">
         Shard
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/crd/synctargets.workload.kcp.io/" class="md-nav__link">
-        SyncTarget
       </a>
     </li>
   
@@ -1858,7 +1666,7 @@ capabilities to service consumers in other workspaces.</p>
 workspace.</p>
 <blockquote>
 <p>The <code>apigen</code> tool used below can be found
-<a href="https://github.com/kcp-dev/kcp/tree/main/cmd/apigen">here</a>. Builds for the
+<a href="https://github.com/kcp-dev/kcp/tree/main/sdk/cmd/apigen">here</a>. Builds for the
 tool are not currently published as part of the kcp release process.</p>
 </blockquote>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>$<span class="w"> </span>mkdir<span class="w"> </span>wildwest-schemas/
