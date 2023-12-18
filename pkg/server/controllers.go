@@ -130,13 +130,8 @@ func (s *Server) registerController(controller *controllerWrapper) error {
 	return nil
 }
 
-func (s *Server) installClusterRoleAggregationController(ctx context.Context, config *rest.Config) error {
+func (s *Server) installClusterRoleAggregationController(ctx context.Context, kubeClient kcpkubernetesclientset.ClusterInterface) error {
 	controllerName := "kube-cluster-role-aggregation-controller"
-	config = rest.AddUserAgent(rest.CopyConfig(config), controllerName)
-	kubeClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
 	c := clusterroleaggregation.NewClusterRoleAggregation(
 		s.KubeSharedInformerFactory.Rbac().V1().ClusterRoles(),
 		kubeClient.RbacV1())
@@ -935,14 +930,7 @@ func (s *Server) installTenancyReplicateLogicalClusterControllers(ctx context.Co
 	})
 }
 
-func (s *Server) installCoreReplicateClusterRoleBindingControllers(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, corereplicateclusterrolebinding.ControllerName)
-	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installCoreReplicateClusterRoleBindingControllers(ctx context.Context, kubeClusterClient kcpkubernetesclientset.ClusterInterface) error {
 	c := corereplicateclusterrolebinding.NewController(
 		kubeClusterClient,
 		s.KubeSharedInformerFactory.Rbac().V1().ClusterRoleBindings(),
@@ -958,14 +946,7 @@ func (s *Server) installCoreReplicateClusterRoleBindingControllers(ctx context.C
 	})
 }
 
-func (s *Server) installTenancyReplicateClusterRoleControllers(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, tenancyreplicateclusterrole.ControllerName)
-	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installTenancyReplicateClusterRoleControllers(ctx context.Context, kubeClusterClient kcpkubernetesclientset.ClusterInterface) error {
 	c := tenancyreplicateclusterrole.NewController(
 		kubeClusterClient,
 		s.KubeSharedInformerFactory.Rbac().V1().ClusterRoles(),
@@ -980,14 +961,7 @@ func (s *Server) installTenancyReplicateClusterRoleControllers(ctx context.Conte
 	})
 }
 
-func (s *Server) installTenancyReplicateClusterRoleBindingControllers(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, tenancyreplicateclusterrolebinding.ControllerName)
-	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installTenancyReplicateClusterRoleBindingControllers(ctx context.Context, kubeClusterClient kcpkubernetesclientset.ClusterInterface) error {
 	c := tenancyreplicateclusterrolebinding.NewController(
 		kubeClusterClient,
 		s.KubeSharedInformerFactory.Rbac().V1().ClusterRoleBindings(),
@@ -1002,15 +976,7 @@ func (s *Server) installTenancyReplicateClusterRoleBindingControllers(ctx contex
 	})
 }
 
-func (s *Server) installAPIExportEndpointSliceController(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, apiexportendpointslice.ControllerName)
-
-	kcpClusterClient, err := kcpclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installAPIExportEndpointSliceController(ctx context.Context, kcpClusterClient kcpclientset.ClusterInterface) error {
 	c, err := apiexportendpointslice.NewController(
 		s.KcpSharedInformerFactory.Apis().V1alpha1().APIExportEndpointSlices(),
 		// Shards and APIExports get retrieved from cache server
@@ -1031,15 +997,7 @@ func (s *Server) installAPIExportEndpointSliceController(ctx context.Context, co
 	})
 }
 
-func (s *Server) installPartitionSetController(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, partitionset.ControllerName)
-
-	kcpClusterClient, err := kcpclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installPartitionSetController(ctx context.Context, kcpClusterClient kcpclientset.ClusterInterface) error {
 	c, err := partitionset.NewController(
 		s.KcpSharedInformerFactory.Topology().V1alpha1().PartitionSets(),
 		s.KcpSharedInformerFactory.Topology().V1alpha1().Partitions(),
@@ -1058,14 +1016,7 @@ func (s *Server) installPartitionSetController(ctx context.Context, config *rest
 	})
 }
 
-func (s *Server) installExtraAnnotationSyncController(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, extraannotationsync.ControllerName)
-	kcpClusterClient, err := kcpclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installExtraAnnotationSyncController(ctx context.Context, kcpClusterClient kcpclientset.ClusterInterface) error {
 	c, err := extraannotationsync.NewController(kcpClusterClient,
 		s.KcpSharedInformerFactory.Apis().V1alpha1().APIExports(),
 		s.KcpSharedInformerFactory.Apis().V1alpha1().APIBindings(),
@@ -1084,16 +1035,8 @@ func (s *Server) installExtraAnnotationSyncController(ctx context.Context, confi
 
 func (s *Server) installKubeQuotaController(
 	ctx context.Context,
-	config *rest.Config,
+	kubeClusterClient kcpkubernetesclientset.ClusterInterface,
 ) error {
-	config = rest.CopyConfig(config)
-	// TODO(ncdc): figure out if we need config
-	config = rest.AddUserAgent(config, kubequota.ControllerName)
-	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
 	// TODO(ncdc): should we make these configurable?
 	const (
 		quotaResyncPeriod        = 5 * time.Minute
@@ -1130,16 +1073,11 @@ func (s *Server) installKubeQuotaController(
 	})
 }
 
-func (s *Server) installApiExportIdentityController(ctx context.Context, config *rest.Config) error {
+func (s *Server) installApiExportIdentityController(ctx context.Context, kubeClusterClient kcpkubernetesclientset.ClusterInterface) error {
 	if s.Options.Extra.ShardName == corev1alpha1.RootShard {
 		return nil
 	}
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, identitycache.ControllerName)
-	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
+
 	c, err := identitycache.NewApiExportIdentityProviderController(kubeClusterClient, s.CacheKcpSharedInformerFactory.Apis().V1alpha1().APIExports(), s.KubeSharedInformerFactory.Core().V1().ConfigMaps())
 	if err != nil {
 		return err
@@ -1168,20 +1106,7 @@ func (s *Server) installReplicationController(ctx context.Context, config *rest.
 	})
 }
 
-func (s *Server) installGarbageCollectorController(ctx context.Context, config *rest.Config) error {
-	config = rest.CopyConfig(config)
-	config = rest.AddUserAgent(config, garbagecollector.ControllerName)
-
-	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
-	metadataClient, err := kcpmetadata.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) installGarbageCollectorController(ctx context.Context, kubeClusterClient kcpkubernetesclientset.ClusterInterface, metadataClient kcpmetadata.ClusterInterface) error {
 	// TODO: make it configurable
 	const (
 		workersPerLogicalCluster = 1

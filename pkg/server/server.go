@@ -25,6 +25,8 @@ import (
 	"os"
 	"time"
 
+	kcpkubernetesclientset "github.com/kcp-dev/client-go/kubernetes"
+	kcpmetadata "github.com/kcp-dev/client-go/metadata"
 	"github.com/kcp-dev/logicalcluster/v3"
 
 	extensionsapiserver "k8s.io/apiextensions-apiserver/pkg/apiserver"
@@ -57,6 +59,7 @@ import (
 	virtualrootapiserver "github.com/kcp-dev/kcp/pkg/virtual/framework/rootapiserver"
 	"github.com/kcp-dev/kcp/sdk/apis/core"
 	corev1alpha1 "github.com/kcp-dev/kcp/sdk/apis/core/v1alpha1"
+	kcpclientset "github.com/kcp-dev/kcp/sdk/client/clientset/versioned/cluster"
 )
 
 const resyncPeriod = 10 * time.Hour
@@ -387,12 +390,26 @@ func (s *Server) Run(ctx context.Context) error {
 	// TODO: split apart everything after this line, into their own commands, optional launched in this process
 
 	controllerConfig := rest.CopyConfig(s.IdentityConfig)
+	kcpClusterClient, err := kcpclientset.NewForConfig(controllerConfig)
+	if err != nil {
+		return err
+	}
+
+	kubeClusterClient, err := kcpkubernetesclientset.NewForConfig(controllerConfig)
+	if err != nil {
+		return err
+	}
+
+	metadataClient, err := kcpmetadata.NewForConfig(controllerConfig)
+	if err != nil {
+		return err
+	}
 
 	if err := s.installKubeNamespaceController(ctx, controllerConfig); err != nil {
 		return err
 	}
 
-	if err := s.installClusterRoleAggregationController(ctx, controllerConfig); err != nil {
+	if err := s.installClusterRoleAggregationController(ctx, kubeClusterClient); err != nil {
 		return err
 	}
 
@@ -408,7 +425,7 @@ func (s *Server) Run(ctx context.Context) error {
 		return err
 	}
 
-	if err := s.installApiExportIdentityController(ctx, controllerConfig); err != nil {
+	if err := s.installApiExportIdentityController(ctx, kubeClusterClient); err != nil {
 		return err
 	}
 	if err := s.installReplicationController(ctx, controllerConfig); err != nil {
@@ -442,7 +459,7 @@ func (s *Server) Run(ctx context.Context) error {
 		if err := s.installCRDCleanupController(ctx, controllerConfig); err != nil {
 			return err
 		}
-		if err := s.installExtraAnnotationSyncController(ctx, controllerConfig); err != nil {
+		if err := s.installExtraAnnotationSyncController(ctx, kcpClusterClient); err != nil {
 			return err
 		}
 	}
@@ -484,24 +501,24 @@ func (s *Server) Run(ctx context.Context) error {
 	}
 
 	if s.Options.Controllers.EnableAll || enabled.Has("corereplicateclusterrolebinding") {
-		if err := s.installCoreReplicateClusterRoleBindingControllers(ctx, controllerConfig); err != nil {
+		if err := s.installCoreReplicateClusterRoleBindingControllers(ctx, kubeClusterClient); err != nil {
 			return err
 		}
 	}
 
 	if s.Options.Controllers.EnableAll || enabled.Has("tenancyreplicateclusterrole") {
-		if err := s.installTenancyReplicateClusterRoleControllers(ctx, controllerConfig); err != nil {
+		if err := s.installTenancyReplicateClusterRoleControllers(ctx, kubeClusterClient); err != nil {
 			return err
 		}
 	}
 	if s.Options.Controllers.EnableAll || enabled.Has("tenancyreplicationclusterrolebinding") {
-		if err := s.installTenancyReplicateClusterRoleBindingControllers(ctx, controllerConfig); err != nil {
+		if err := s.installTenancyReplicateClusterRoleBindingControllers(ctx, kubeClusterClient); err != nil {
 			return err
 		}
 	}
 
 	if s.Options.Controllers.EnableAll || enabled.Has("apiexportendpointslice") {
-		if err := s.installAPIExportEndpointSliceController(ctx, controllerConfig); err != nil {
+		if err := s.installAPIExportEndpointSliceController(ctx, kcpClusterClient); err != nil {
 			return err
 		}
 	}
@@ -513,19 +530,19 @@ func (s *Server) Run(ctx context.Context) error {
 	}
 
 	if s.Options.Controllers.EnableAll || enabled.Has("partition") {
-		if err := s.installPartitionSetController(ctx, controllerConfig); err != nil {
+		if err := s.installPartitionSetController(ctx, kcpClusterClient); err != nil {
 			return err
 		}
 	}
 
 	if s.Options.Controllers.EnableAll || enabled.Has("quota") {
-		if err := s.installKubeQuotaController(ctx, controllerConfig); err != nil {
+		if err := s.installKubeQuotaController(ctx, kubeClusterClient); err != nil {
 			return err
 		}
 	}
 
 	if s.Options.Controllers.EnableAll || enabled.Has("garbagecollector") {
-		if err := s.installGarbageCollectorController(ctx, controllerConfig); err != nil {
+		if err := s.installGarbageCollectorController(ctx, kubeClusterClient, metadataClient); err != nil {
 			return err
 		}
 	}
